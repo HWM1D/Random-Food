@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>انتخاب غذای تصادفی</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+
+
+/* تنظیمات کلی و فونت */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    direction: rtl;
+    background: linear-gradient(135deg, #111827 0%, #000000 50%, #374151 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+/* کانتینر اصلی */
+.container {
+    position: relative;
+    min-height: 100vh;
+}
+
+/* پترن پس‌زمینه */
+.background-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at top, rgba(55, 65, 81, 0.2) 0%, transparent 50%, transparent 100%);
+}
+
+/* محتوای اصلی */
+.content {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    gap: 2rem;
+}
+
+/* بخش هدر */
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.description {
+    font-size: 1.125rem;
+    color: #d1d5db;
+    max-width: 32rem;
+    margin: 0 auto;
+    line-height: 1.75;
+}
+
+/* دکمه اصلی */
+.select-button {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    color: white;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #4b5563;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.select-button:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+    transform: scale(1.05);
+    box-shadow: 0 25px 50px -12px rgba(107, 114, 128, 0.25);
+}
+
+.select-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid white;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* پیام نمایش */
+.message {
+    text-align: center;
+    animation: fade-in 0.6s ease-out;
+}
+
+.message p {
+    font-size: 1.25rem;
+    color: #d1d5db;
+    font-weight: 500;
+}
+
+/* کارت نمایش غذا */
+.food-card {
+    width: 100%;
+    max-width: 28rem;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.8) 100%);
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    backdrop-filter: blur(8px);
+    animation: scale-in 0.7s ease-out;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.card-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.card-image img {
+    width: 100%;
+    height: 16rem;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+}
+
+.card-image:hover img {
+    transform: scale(1.1);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+}
+
+.card-content {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.card-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.divider {
+    width: 4rem;
+    height: 0.25rem;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    margin: 0 auto;
+    border-radius: 9999px;
+}
+
+/* انیمیشن‌ها */
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scale-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ریسپانسیو */
+@media (min-width: 768px) {
+    .description {
+        font-size: 1.25rem;
+    }
+    
+    .message p {
+        font-size: 1.5rem;
+    }
+    
+    .card-content h3 {
+        font-size: 1.875rem;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- پترن پس‌زمینه -->
+        <div class="background-pattern"></div>
+        
+        <div class="content">
+            <!-- بخش هدر -->
+            <div class="header">
+                <p class="description">
+                    بیایید یک غذای تصادفی برای شما انتخاب کنیم
+                </p>
+            </div>
+
+            <!-- دکمه اصلی -->
+            <button id="selectBtn" class="select-button">
+                <span class="button-text">انتخاب غذای تصادفی</span>
+                <div class="loading-spinner" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>در حال انتخاب...</span>
+                </div>
+            </button>
+
+            <!-- پیام نمایش -->
+            <div id="message" class="message" style="display: none;">
+                <p>غذای انتخاب شده برای شما عبارت است از:</p>
+            </div>
+
+            <!-- کارت نمایش غذا -->
+            <div id="foodCard" class="food-card" style="display: none;">
+                <div class="card-image">
+                    <img id="foodImage" src="" alt="">
+                    <div class="image-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <h3 id="foodName"></h3>
+                    <div class="divider"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+// لیست گزینه‌های غذا
+const foodOptions = [
+    {
+        name: 'snack',
+        persianName: 'اسنک',
+        image: 'snack.jpg'
+    },
+    {
+        name: 'pizza',
+        persianName: 'پیتزا',
+        image: 'pizza.jpg'
+    },
+    {
+        name: 'yogurt',
+        persianName: 'ماست',
+        image: 'mast.jpg'
+    },
+    {
+        name: 'soup',
+        persianName: 'سوپ',
+        image: 'soop.jpg'
+    },
+    {
+        name: 'kebab',
+        persianName: 'کباب',
+        image: 'kebab.jpg'
+    }
+];
+
+// المنت‌های DOM
+const selectBtn = document.getElementById('selectBtn');
+const buttonText = document.querySelector('.button-text');
+const loadingSpinner = document.querySelector('.loading-spinner');
+const message = document.getElementById('message');
+const foodCard = document.getElementById('foodCard');
+const foodImage = document.getElementById('foodImage');
+const foodName = document.getElementById('foodName');
+
+// متغیرهای وضعیت
+let isAnimating = false;
+
+// تابع انتخاب غذای تصادفی با احتمال بیشتر برای پیتزا و اسنک
+function selectRandomFood() {
+    // جلوگیری از کلیک مجدد در طول انیمیشن
+    if (isAnimating) return;
+    
+    isAnimating = true;
+    selectBtn.disabled = true;
+    
+    // نمایش انیمیشن لودینگ
+    buttonText.style.display = 'none';
+    loadingSpinner.style.display = 'flex';
+    
+    // نمایش پیام
+    message.style.display = 'block';
+    message.style.animation = 'fade-in 0.6s ease-out';
+    
+    // مخفی کردن کارت قبلی
+    foodCard.style.display = 'none';
+    
+    // تاخیر کوتاه برای تجربه کاربری بهتر
+    setTimeout(() => {
+        // ایجاد آرایه وزن‌دار برای افزایش احتمال پیتزا و اسنک
+        const weightedOptions = [
+            ...Array(2).fill(foodOptions[0]), // اسنک - 2 بار
+            ...Array(2).fill(foodOptions[1]), // پیتزا - 2 بار
+            foodOptions[2], // ماست - 1 بار
+            foodOptions[3] , // سوپ - 1 بار
+            foodOptions[4]  // کباب - 1 بار
+        ];
+        
+        // انتخاب تصادفی از آرایه وزن‌دار
+        const randomIndex = Math.floor(Math.random() * weightedOptions.length);
+        const selectedFood = weightedOptions[randomIndex];
+        
+        // به‌روزرسانی اطلاعات کارت غذا
+        foodImage.src = selectedFood.image;
+        foodImage.alt = selectedFood.persianName;
+        foodName.textContent = selectedFood.persianName;
+        
+        // نمایش کارت غذا
+        foodCard.style.display = 'block';
+        foodCard.style.animation = 'scale-in 0.7s ease-out';
+        
+        // بازگردانی وضعیت دکمه
+        isAnimating = false;
+        selectBtn.disabled = false;
+        buttonText.style.display = 'block';
+        loadingSpinner.style.display = 'none';
+    }, 800);
+}
+
+// اضافه کردن event listener به دکمه
+selectBtn.addEventListener('click', selectRandomFood);
+
+// اضافه کردن قابلیت کیبورد (اسپیس یا انتر)
+document.addEventListener('keydown', function(event) {
+    if ((event.code === 'Space' || event.code === 'Enter') && !isAnimating) {
+        event.preventDefault();
+        selectRandomFood();
+    }
+});
+
+// لاگ برای دیباگ
+console.log('اپلیکیشن انتخاب غذای تصادفی آماده است!');
+
+
+    </script>
+</body>
+</html>
